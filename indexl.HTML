@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>川剧脸谱</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "楷体", "宋体", serif;
+            background: linear-gradient(to bottom, #f8f3e6, #f0e6d3);
+            color: #8b0000;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23d4af37' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .title {
+            font-size: 2.8rem;
+            text-align: center;
+            margin: 20px 0 40px;
+            color: #8b0000;
+            text-shadow: 2px 2px 4px rgba(139, 0, 0, 0.2);
+            letter-spacing: 5px;
+            position: relative;
+        }
+        
+        .title::after {
+            content: "";
+            display: block;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #8b0000, transparent);
+            margin: 10px auto 0;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 50px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .drop-zone {
+            width: 100%;
+            aspect-ratio: 1;
+            border: 3px dashed #8b0000;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255, 255, 255, 0.6);
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .drop-zone:hover {
+            background-color: rgba(255, 255, 255, 0.8);
+            transform: scale(1.02);
+        }
+        
+        .drop-zone.correct {
+            border: 3px solid #4CAF50;
+            background-color: rgba(76, 175, 80, 0.1);
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
+        }
+        
+        .face-icon {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            display: none;
+        }
+        
+        .icons-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-width: 900px;
+            width: 100%;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .draggable {
+            width: 80px;
+            height: 80px;
+            cursor: grab;
+            transition: transform 0.2s;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+        
+        .draggable img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+        
+        .draggable.dragging {
+            opacity: 0.7;
+            transform: scale(1.1);
+            cursor: grabbing;
+        }
+        
+        .instruction {
+            font-size: 1.2rem;
+            text-align: center;
+            margin-top: 20px;
+            color: #8b0000;
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .draggable {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .title {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title">川剧脸谱</h1>
+    
+    <div class="grid-container">
+        <div class="drop-zone" data-color="红色" data-text="红色脸谱，代表勇敢的英雄">
+            <img src="https://pic1.imgdb.cn/item/68eb89b6c5157e1a8869742e.png" alt="红色脸谱" class="face-icon">
+        </div>
+        <div class="drop-zone" data-color="黄色" data-text="黄色脸谱，代表厉害又凶猛的人物">
+            <img src="https://pic1.imgdb.cn/item/68eb8bbac5157e1a886978fd.png" alt="黄色脸谱" class="face-icon">
+        </div>
+        <div class="drop-zone" data-color="蓝色" data-text="蓝色脸谱，代表脾气火爆的勇士">
+            <img src="https://pic1.imgdb.cn/item/68eb8bfcc5157e1a88697a04.png" alt="蓝色脸谱" class="face-icon">
+        </div>
+        <div class="drop-zone" data-color="绿色" data-text="绿色脸谱，也代表脾气火爆的勇士">
+            <img src="https://pic1.imgdb.cn/item/68eb8cd4c5157e1a88697bdd.png" alt="绿色脸谱" class="face-icon">
+        </div>
+        <div class="drop-zone" data-color="黑色" data-text="黑色脸谱，代表铁面无私的判官，例如包青天">
+            <img src="https://pic1.imgdb.cn/item/68eb8d49c5157e1a88697efd.png" alt="黑色脸谱" class="face-icon">
+        </div>
+        <div class="drop-zone" data-color="白色" data-text="白色脸谱，代表阴险狡猾的坏蛋，例如曹操">
+            <img src="https://pic1.imgdb.cn/item/68eb8d89c5157e1a886980d0.png" alt="白色脸谱" class="face-icon">
+        </div>
+        <div class="drop-zone" data-color="银色" data-text="银色脸谱，代表神仙，例如孙悟空">
+            <img src="https://pic1.imgdb.cn/item/68eb8e2dc5157e1a886984e3.png" alt="银色脸谱" class="face-icon">
+        </div>
+        <div class="drop-zone" data-color="金色" data-text="金色脸谱，也代表神仙和妖怪">
+            <img src="https://pic1.imgdb.cn/item/68eb8f42c5157e1a88698b8a.png" alt="金色脸谱" class="face-icon">
+        </div>
+    </div>
+    
+    <div class="icons-container">
+        <div class="draggable" draggable="true" data-target="红色">
+            <img src="https://pic1.imgdb.cn/item/68eb89b6c5157e1a8869742e.png" alt="红色脸谱">
+        </div>
+        <div class="draggable" draggable="true" data-target="黄色">
+            <img src="https://pic1.imgdb.cn/item/68eb8bbac5157e1a886978fd.png" alt="黄色脸谱">
+        </div>
+        <div class="draggable" draggable="true" data-target="蓝色">
+            <img src="https://pic1.imgdb.cn/item/68eb8bfcc5157e1a88697a04.png" alt="蓝色脸谱">
+        </div>
+        <div class="draggable" draggable="true" data-target="绿色">
+            <img src="https://pic1.imgdb.cn/item/68eb8cd4c5157e1a88697bdd.png" alt="绿色脸谱">
+        </div>
+        <div class="draggable" draggable="true" data-target="黑色">
+            <img src="https://pic1.imgdb.cn/item/68eb8d49c5157e1a88697efd.png" alt="黑色脸谱">
+        </div>
+        <div class="draggable" draggable="true" data-target="白色">
+            <img src="https://pic1.imgdb.cn/item/68eb8d89c5157e1a886980d0.png" alt="白色脸谱">
+        </div>
+        <div class="draggable" draggable="true" data-target="银色">
+            <img src="https://pic1.imgdb.cn/item/68eb8e2dc5157e1a886984e3.png" alt="银色脸谱">
+        </div>
+        <div class="draggable" draggable="true" data-target="金色">
+            <img src="https://pic1.imgdb.cn/item/68eb8f42c5157e1a88698b8a.png" alt="金色脸谱">
+        </div>
+    </div>
+    
+    <p class="instruction">点击上方格子听介绍，拖动下方脸谱到对应格子中</p>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            const draggables = document.querySelectorAll('.draggable');
+            const errorSound = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==");
+            
+            // 预加载语音合成
+            const synth = window.speechSynthesis;
+            
+            // 点击格子播放语音
+            dropZones.forEach(zone => {
+                zone.addEventListener('click', function() {
+                    const color = this.getAttribute('data-color');
+                    const text = this.getAttribute('data-text');
+                    
+                    // 播放颜色名称
+                    speakText(`${color}脸谱`);
+                    
+                    // 如果格子中已有正确的脸谱，播放完整介绍
+                    if (this.classList.contains('correct')) {
+                        setTimeout(() => {
+                            speakText(text);
+                        }, 1000);
+                    }
+                });
+            });
+            
+            // 语音播放函数
+            function speakText(text) {
+                if (synth.speaking) {
+                    synth.cancel();
+                }
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN';
+                utterance.rate = 0.9;
+                synth.speak(utterance);
+            }
+            
+            // 为每个可拖动元素添加触摸事件
+            draggables.forEach(draggable => {
+                // 触摸开始
+                draggable.addEventListener('touchstart', function(e) {
+                    e.preventDefault();
+                    this.classList.add('dragging');
+                    
+                    // 设置触摸点偏移
+                    const touch = e.touches[0];
+                    const rect = this.getBoundingClientRect();
+                    this.offsetX = touch.clientX - rect.left;
+                    this.offsetY = touch.clientY - rect.top;
+                    
+                    // 设置初始位置
+                    this.style.position = 'fixed';
+                    this.style.zIndex = '1000';
+                    this.style.left = (rect.left) + 'px';
+                    this.style.top = (rect.top) + 'px';
+                });
+                
+                // 触摸移动
+                draggable.addEventListener('touchmove', function(e) {
+                    e.preventDefault();
+                    if (!this.classList.contains('dragging')) return;
+                    
+                    const touch = e.touches[0];
+                    this.style.left = (touch.clientX - this.offsetX) + 'px';
+                    this.style.top = (touch.clientY - this.offsetY) + 'px';
+                });
+                
+                // 触摸结束
+                draggable.addEventListener('touchend', function(e) {
+                    if (!this.classList.contains('dragging')) return;
+                    
+                    this.classList.remove('dragging');
+                    
+                    // 获取目标颜色
+                    const targetColor = this.getAttribute('data-target');
+                    
+                    // 检查是否在正确的放置区域
+                    let droppedInCorrectZone = false;
+                    dropZones.forEach(zone => {
+                        const zoneRect = zone.getBoundingClientRect();
+                        const draggableRect = this.getBoundingClientRect();
+                        
+                        // 检查是否重叠
+                        if (
+                            draggableRect.left < zoneRect.right &&
+                            draggableRect.right > zoneRect.left &&
+                            draggableRect.top < zoneRect.bottom &&
+                            draggableRect.bottom > zoneRect.top
+                        ) {
+                            // 检查颜色是否匹配
+                            if (zone.getAttribute('data-color') === targetColor) {
+                                // 正确放置
+                                droppedInCorrectZone = true;
+                                
+                                // 将脸谱放入格子中
+                                const faceIcon = zone.querySelector('.face-icon');
+                                faceIcon.style.display = 'block';
+                                
+                                // 标记格子为正确
+                                zone.classList.add('correct');
+                                
+                                // 播放介绍语音
+                                const text = zone.getAttribute('data-text');
+                                speakText(text);
+                                
+                                // 隐藏拖动的元素
+                                this.style.display = 'none';
+                            }
+                        }
+                    });
+                    
+                    // 如果没有正确放置，播放错误声音并返回原位
+                    if (!droppedInCorrectZone) {
+                        errorSound.play();
+                        
+                        // 返回原位
+                        this.style.position = '';
+                        this.style.zIndex = '';
+                        this.style.left = '';
+                        this.style.top = '';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
